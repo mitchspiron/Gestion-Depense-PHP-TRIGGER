@@ -10,11 +10,12 @@ if(isset($_POST['edit'])){
         $etab = strip_tags($_POST['etab']);
         $montant = strip_tags($_POST['montant']);
 
-        $sql = "UPDATE `depense` SET `etab_id`=:etab, `montant`=:montant WHERE `id`=:id;";
+        $sql = "UPDATE `depense` SET `etab_id`=:etab, `utilisateur`=:utilisateur, `montant`=:montant WHERE `id`=:id;";
 
         $query = $db->prepare($sql);
 
         $query->bindValue(':etab', $etab, PDO::PARAM_INT);
+        $query->bindValue(':utilisateur', $_COOKIE['id'], PDO::PARAM_INT);
         $query->bindValue(':montant', $montant, PDO::PARAM_STR);
         $query->bindValue(':id', $id ,PDO::PARAM_INT);
 

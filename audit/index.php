@@ -1,4 +1,9 @@
 <?php
+// Vérifie si l'utilisateur est déjà connecté, si oui il reste sur le dashboard
+if (!isset($_COOKIE['email'])) {
+    header("Location: ../auth/index.php");
+    exit;
+}
 
 // On inclut la connexion à la base
 require_once('../configs/connection.php');
@@ -92,6 +97,38 @@ require_once('../configs/close.php');
         <div id="content-wrapper" class="d-flex flex-column">
             <!-- Main Content -->
             <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?= htmlspecialchars($_COOKIE['nom']) ?> <?= htmlspecialchars($_COOKIE['prenom']) ?></span>
+                                <img class="img-profile rounded-circle" src="../assets/img/undraw_profile.svg">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                <button class="dropdown-item" onclick="deleteCookies()" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Se déconnecter
+                                </button>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- Page Heading -->
@@ -115,6 +152,7 @@ require_once('../configs/close.php');
                                             <th>Ancien Dépense</th>
                                             <th>Nouveau Dépense</th>
                                             <th>Type d'action</th>
+                                            <th>Utilisateur</th>
                                             <th>Date et Heure</th>
                                         </tr>
                                     </thead>
@@ -145,6 +183,7 @@ require_once('../configs/close.php');
                                                         ";
                                                     }
                                                     ?></td>
+                                                <td><?= htmlspecialchars($audit['personne']) ?></td>
                                                 <td><?= htmlspecialchars($audit['date']) ?></td>
                                             </tr>
                                         <?php
@@ -195,6 +234,9 @@ require_once('../configs/close.php');
 
     <!-- Page level custom scripts -->
     <script src="../assets/js/demo/datatables-demo.js"></script>
+
+    <!-- Deconnexion -->
+    <script src="../auth/controller/logout.js"></script>
 </body>
 
 </html>
