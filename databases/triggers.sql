@@ -3,7 +3,7 @@
 --
 DROP TRIGGER IF EXISTS `delete_audit_trigger`;
 DELIMITER $$
-CREATE TRIGGER `delete_audit_trigger` AFTER DELETE ON `depense` FOR EACH ROW INSERT INTO audit VALUES(null,'SUPPRESSION', NOW(), Old.etab_id, Old.id, Old.montant, NULL)
+CREATE TRIGGER `delete_audit_trigger` AFTER DELETE ON `depense` FOR EACH ROW INSERT INTO audit VALUES(null,'SUPPRESSION', NOW(), Old.etab_id, Old.id, Old.montant, NULL, Old.utilisateur)
 $$
 DELIMITER ;
 DROP TRIGGER IF EXISTS `delete_depense_trigger`;
@@ -14,9 +14,9 @@ DELIMITER ;
 DROP TRIGGER IF EXISTS `insert_audit_trigger`;
 DELIMITER $$
 CREATE TRIGGER `insert_audit_trigger` AFTER INSERT ON `depense` FOR EACH ROW BEGIN
-    SET @latest_depense = (SELECT montant FROM depense ORDER BY id DESC LIMIT 1 OFFSET 1);
+    SET @latest_depense = (SELECT montant FROM depense WHERE etab_id = New.etab_id ORDER BY id DESC LIMIT 1 OFFSET 1);
     
-    INSERT INTO audit VALUES(null, 'INSERTION', NOW(), New.etab_id, New.id, @latest_depense, New.montant);
+    INSERT INTO audit VALUES(null, 'INSERTION', NOW(), New.etab_id, New.id, @latest_depense, New.montant, New.utilisateur);
 END
 $$
 DELIMITER ;
@@ -27,7 +27,7 @@ $$
 DELIMITER ;
 DROP TRIGGER IF EXISTS `update_audit_trigger`;
 DELIMITER $$
-CREATE TRIGGER `update_audit_trigger` AFTER UPDATE ON `depense` FOR EACH ROW INSERT INTO audit VALUES(null,'MODIFICATION', NOW(), New.etab_id, New.id, Old.montant, New.montant)
+CREATE TRIGGER `update_audit_trigger` AFTER UPDATE ON `depense` FOR EACH ROW INSERT INTO audit VALUES(null,'MODIFICATION', NOW(), New.etab_id, New.id, Old.montant, New.montant, New.utilisateur)
 $$
 DELIMITER ;
 DROP TRIGGER IF EXISTS `update_depense_trigger`;
